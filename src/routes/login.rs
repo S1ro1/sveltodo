@@ -4,7 +4,6 @@ use axum::{http::StatusCode, Extension, Json};
 
 use axum::response::{IntoResponse, Response};
 use chrono::{Days, Utc};
-use cookie::time::Duration;
 use cookie::Cookie;
 use jsonwebtoken::{encode, EncodingKey, Header};
 use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};

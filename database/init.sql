@@ -4,5 +4,16 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(512) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS tasks (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    title VARCHAR(64) NOT NULL,
+    description VARCHAR(512) NOT NULL,
+    difficulty INTEGER NOT NULL,
+    finished BOOLEAN NOT NULL DEFAULT FALSE,
+    removed BOOLEAN NOT NULL DEFAULT FALSE
+);
+
 INSERT INTO users (name, password) VALUES ('admin', 'admin');
+INSERT INTO tasks (user_id, title, description, difficulty) VALUES (2, 'Task 1', 'Description 1', 1);
 
