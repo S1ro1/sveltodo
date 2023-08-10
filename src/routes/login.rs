@@ -77,7 +77,8 @@ fn validate_login(request_pw: String, u: Model) -> Response {
 
     let cookie = Cookie::build("authorization", token)
         .http_only(true)
-        .secure(true)
+        .path("/")
+        .same_site(cookie::SameSite::None)
         .finish();
 
     (

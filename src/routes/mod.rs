@@ -1,11 +1,12 @@
 use axum::{
+    http::Method,
     middleware,
     routing::{get, post},
     Extension, Router,
 };
 use dotenv::dotenv;
 use sea_orm::Database;
-use tower_http::cors::CorsLayer;
+use tower_http::cors::{AllowOrigin, Any, CorsLayer};
 
 mod jwt_middleware;
 mod login;
@@ -26,7 +27,7 @@ pub async fn router() -> Router {
         .layer(middleware::from_fn(jwt_middleware))
         .route("/login", post(login))
         .route("/register", post(register))
-        .layer(CorsLayer::permissive())
+        .layer(CorsLayer::very_permissive())
         .layer(Extension(db));
     router
 }

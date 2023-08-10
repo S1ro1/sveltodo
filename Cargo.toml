@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 argon2 = "0.5.1"
 axum = { version = "0.6.20", features = ["macros"] }
+axum-extra = { version = "0.7.7", features = ["cookie", "cookie-private", "cookie-key-expansion"] }
 chrono = "0.4.26"
 cookie = "0.17.0"
 dotenv = "0.15.0"

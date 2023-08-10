@@ -3,6 +3,7 @@ use axum::{
     http::{Request, StatusCode},
     middleware::Next,
 };
+use axum_extra::extract::CookieJar;
 use jsonwebtoken::{DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
 
@@ -19,31 +20,27 @@ pub async fn jwt_middleware<B>(
     mut request: Request<B>,
     next: Next<B>,
 ) -> Result<Response, StatusCode> {
-    let auth_header = request
-        .headers()
-        .get("authorization")
-        .ok_or(StatusCode::UNAUTHORIZED)?;
+    let jar = CookieJar::from_headers(request.headers());
 
-    let auth_header = auth_header.to_str().map_err(|_| StatusCode::UNAUTHORIZED)?;
+    let auth_header = match jar.get("authorization") {
+        Some(jwt_token) => jwt_token.to_string(),
+        None => return Err(StatusCode::UNAUTHORIZED),
+    };
 
-    if !auth_header.starts_with("Bearer ") {
+    if !auth_header.starts_with("authorization=") {
         return Err(StatusCode::UNAUTHORIZED);
     }
 
-    let jwt_token = auth_header.trim_start_matches("Bearer ");
+    let jwt_token = auth_header.trim_start_matches("authorization=");
 
     let token_header =
         jsonwebtoken::decode_header(&jwt_token).map_err(|_| StatusCode::UNAUTHORIZED)?;
 
-    dbg!(&token_header);
-
     let user_claims = jsonwebtoken::decode::<UserClaims>(
-        jwt_token,
+        &jwt_token,
         &DecodingKey::from_secret(SECRET.as_ref()),
         &Validation::new(token_header.alg),
     );
-
-    dbg!(&user_claims);
 
     let user_claims = match user_claims {
         Ok(user_claims) => user_claims,
