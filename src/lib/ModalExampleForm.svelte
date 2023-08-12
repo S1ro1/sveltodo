@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { RangeSlider, modalStore } from '@skeletonlabs/skeleton';
 	import axios from 'axios';
-    import { tasks } from '../store';
-    import type { ResponseTask } from '../routes/dashboard/tasks';
+	import { tasks } from '../store';
+	import type { ResponseTask } from '../routes/dashboard/tasks';
 	export let parent: any;
 
 	async function onFormSubmit() {
@@ -13,15 +13,15 @@
 			return;
 		}
 
-        tasks.update(t => [...t, response.data]);
+		tasks.update((t) => [...t, response.data]);
 
 		modalStore.close();
 	}
 
 	const formData = {
-		title: '',
-		description: '',
-		difficulty: 0
+		title: $modalStore[0].meta.task_title ?? '',
+		description: $modalStore[0].meta.task_description ?? '',
+		difficulty: $modalStore[0].meta.task_difficulty ?? 0
 	};
 
 	// Base Classes
@@ -63,7 +63,7 @@
 		<!-- prettier-ignore -->
 		<footer class="modal-footer {parent.regionFooter}">
         <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>{parent.buttonTextCancel}</button>
-        <button class="btn {parent.buttonPositive}" on:click={onFormSubmit}>Submit Form</button>
+        <button class="btn {parent.buttonPositive}" on:click={onFormSubmit}>{$modalStore[0].meta.update ? 'Update task' : 'Create task'}</button>
     </footer>
 	</div>
 {/if}
