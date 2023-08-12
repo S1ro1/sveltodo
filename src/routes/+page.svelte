@@ -3,18 +3,21 @@
 <script lang="ts">
 	import axios from 'axios';
 	import { goto } from '$app/navigation';
+	import { username } from '../store';
 	axios.defaults.withCredentials = true;
 
-	let username = '';
+	let form_username = '';
 	let password = '';
 
 	async function handleSubmit() {
 		const response = await axios.post('http://localhost:3000/login', {
-			username: username,
+			username: form_username,
 			password: password
 		});
 
 		if (response.status == 200) {
+			username.set(form_username);	
+
 			goto('/dashboard');
 		} else {
 			alert('login failed');
@@ -29,7 +32,7 @@
 			title="username"
 			type="text"
 			placeholder="username"
-			bind:value={username}
+			bind:value={form_username}
 		/>
 		<input
 			class="input"

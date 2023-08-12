@@ -6,13 +6,14 @@
 		type ModalComponent,
 		type ModalSettings,
 		modalStore,
-		Modal
+		Modal,
+		Avatar
 	} from '@skeletonlabs/skeleton';
 	import { icons } from './icons';
 	import { onMount } from 'svelte';
 	import type { RequestTask, ResponseTask } from './tasks';
 	import ModalExampleForm from '$lib/ModalExampleForm.svelte';
-	import { tasks } from '../../store';
+	import { tasks, username } from '../../store';
 
 	onMount(async () => {
 		const response = await axios.get<ResponseTask[]>('http://localhost:3000/get_user_tasks');
@@ -51,6 +52,11 @@
 
 <Modal components={modalComponentRegistry} />
 <AppShell title="Dashboard" class="bg-gradient-to-br variant-gradient-secondary-primary">
+	<svelte:fragment slot="header">
+		<div class="flex justify-end p-4">
+			<Avatar initials={$username} />
+		</div>
+	</svelte:fragment>
 	<slot>
 		<div class="container h-full mx-auto flex justify-center items-center">
 			<div class="flex-col justify-center w-2/3">
