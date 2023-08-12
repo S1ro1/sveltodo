@@ -38,8 +38,6 @@ pub async fn get_user_tasks(
         .await
         .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
 
-    dbg!(&tasks);
-
     Ok(Json(
         tasks
             .into_iter()

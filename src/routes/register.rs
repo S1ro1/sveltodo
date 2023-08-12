@@ -32,8 +32,6 @@ fn hash_password(password: String) -> String {
         .unwrap()
         .to_string();
 
-    dbg!(&phash);
-    dbg!(phash.len());
     phash
 }
 

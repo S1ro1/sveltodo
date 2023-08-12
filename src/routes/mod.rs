@@ -7,11 +7,13 @@ use dotenv::dotenv;
 use sea_orm::Database;
 use tower_http::cors::CorsLayer;
 
+mod create_task;
 mod get_user_tasks;
 mod jwt_middleware;
 mod login;
 mod register;
 
+use create_task::create_task;
 use get_user_tasks::get_user_tasks;
 use jwt_middleware::jwt_middleware;
 use login::login;
@@ -24,6 +26,7 @@ pub async fn router() -> Router {
     let db = Database::connect(db_uri).await.unwrap();
 
     let router = Router::new()
+        .route("/create_task", post(create_task))
         .route("/get_user_tasks", get(get_user_tasks))
         .layer(middleware::from_fn(jwt_middleware))
         .route("/login", post(login))

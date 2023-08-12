@@ -15,5 +15,3 @@ CREATE TABLE IF NOT EXISTS tasks (
 );
 
 INSERT INTO users (name, password) VALUES ('admin', 'admin');
-INSERT INTO tasks (user_id, title, description, difficulty) VALUES (2, 'Task 1', 'Description 1', 1);
-
