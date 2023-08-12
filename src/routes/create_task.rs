@@ -13,11 +13,20 @@ pub struct RequestTask {
     difficulty: i32,
 }
 
+#[derive(serde::Serialize)]
+pub struct ResponseTask {
+    id: i32,
+    title: String,
+    description: String,
+    difficulty: i32,
+    finished: bool,
+}
+
 pub async fn create_task(
     Extension(db): Extension<DatabaseConnection>,
     headers: HeaderMap,
     Json(task): Json<RequestTask>,
-) -> Result<String, StatusCode> {
+) -> Result<Json<ResponseTask>, StatusCode> {
     let user = headers.get("userid").unwrap().to_str().unwrap();
 
     let userid = user.parse::<i32>().unwrap();
@@ -35,5 +44,11 @@ pub async fn create_task(
         .await
         .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
 
-    Ok(format!("Task {} created", created_task.title.unwrap()))
+    Ok(Json(ResponseTask {
+        id: created_task.id.unwrap(),
+        title: created_task.title.unwrap(),
+        description: created_task.description.unwrap(),
+        difficulty: created_task.difficulty.unwrap(),
+        finished: created_task.finished.unwrap(),
+    }))
 }

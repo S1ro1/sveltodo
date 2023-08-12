@@ -15,6 +15,7 @@ pub struct ResponseTasks {
     description: String,
     difficulty: i32,
     finished: bool,
+    id: i32,
 }
 
 pub async fn get_user_tasks(
@@ -46,6 +47,7 @@ pub async fn get_user_tasks(
                 description: task.description,
                 difficulty: task.difficulty,
                 finished: task.finished,
+                id: task.id,
             })
             .collect::<Vec<ResponseTasks>>(),
     ))
