@@ -1,19 +1,43 @@
 <script lang="ts">
 	import { RangeSlider, modalStore } from '@skeletonlabs/skeleton';
-	import axios from 'axios';
+	import axios, { type AxiosResponse } from 'axios';
 	import { tasks } from '../store';
 	import type { ResponseTask } from '../routes/dashboard/tasks';
 	export let parent: any;
 
 	async function onFormSubmit() {
-		let response = await axios.post<ResponseTask>('http://localhost:3000/create_task', formData);
+		let response: AxiosResponse<ResponseTask>;
 
-		if (response.status !== 200) {
-			console.log('Error creating task');
-			return;
+		if (!$modalStore[0].meta.update) {
+			response = await axios.post<ResponseTask>('http://localhost:3000/create_task', formData);
+			if (response.status !== 200) {
+				console.log('Error creating task');
+				return;
+			}
+			tasks.update((t) => [...t, response.data]);
+		} else {
+			if (!$modalStore[0].meta.task_id) {
+				console.log('Error updating task');
+				return;
+			}
+
+			let id = $modalStore[0].meta.task_id;
+			console.log(formData);
+			response = await axios.put<ResponseTask>(`http://localhost:3000/update_task/${id}`, formData);
+
+			if (response.status !== 200) {
+				console.log('Error updating task');
+				return;
+			}
+
+			tasks.update((t) => {
+				let index = t.findIndex((t) => t.id === id);
+				t[index] = response.data;
+				return t;
+			});
+
 		}
 
-		tasks.update((t) => [...t, response.data]);
 
 		modalStore.close();
 	}

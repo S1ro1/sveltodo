@@ -14,7 +14,6 @@
 	import type { RequestTask, ResponseTask } from './tasks';
 	import ModalExampleForm from '$lib/ModalExampleForm.svelte';
 	import { tasks, username } from '../../store';
-	import { update_await_block_branch } from 'svelte/internal';
 
 	onMount(async () => {
 		const response = await axios.get<ResponseTask[]>('http://localhost:3000/get_user_tasks');
@@ -33,6 +32,7 @@
 	}
 
 	function modalComponentForm(
+		taskId: number,
 		taskTitle: string,
 		taskDescription: string,
 		taskDifficulty: number,
@@ -45,6 +45,7 @@
 			title: 'Create task',
 			body: 'Fill task information and press submit',
 			meta: {
+				task_id: taskId,
 				task_title: taskTitle,
 				task_description: taskDescription,
 				task_difficulty: taskDifficulty,
@@ -75,7 +76,7 @@
 					<button
 						class="appearance-none border-none bg-none p-0 m-0 block w-full text-left"
 						on:click={() => {
-							modalComponentForm(task.title, task.description, task.difficulty, true);
+							modalComponentForm(task.id, task.title, task.description, task.difficulty, true);
 						}}
 					>
 						<div class="card p-4 m-4 variant-soft-surface card-hover">
@@ -109,7 +110,7 @@
 				type="button"
 				class="btn btn-xl variant-filled-secondary"
 				on:click={() => {
-					modalComponentForm('', '', 0, false);
+					modalComponentForm(-1, '', '', 0, false);
 				}}>+</button
 			>
 		</div>
