@@ -14,6 +14,7 @@ mod jwt_middleware;
 mod login;
 mod register;
 mod update_task;
+mod update_task_status;
 
 use create_task::create_task;
 use delete_task::delete_task;
@@ -22,6 +23,7 @@ use jwt_middleware::jwt_middleware;
 use login::login;
 use register::register;
 use update_task::update_task;
+use update_task_status::update_task_status;
 
 pub async fn router() -> Router {
     dotenv().ok();
@@ -33,6 +35,7 @@ pub async fn router() -> Router {
         .route("/get_user_tasks", get(get_user_tasks))
         .route("/create_task", post(create_task))
         .route("/update_task/:id", put(update_task))
+        .route("/update_task_status/:id", put(update_task_status))
         .route("/delete_task/:id", delete(delete_task))
         .layer(middleware::from_fn(jwt_middleware))
         .route("/login", post(login))
