@@ -1,6 +1,6 @@
-use crate::entity::tasks::{Entity, ActiveModel};
+use crate::entity::tasks::{ActiveModel, Entity};
 use axum::{extract::Path, http::StatusCode, Extension, Json};
-use sea_orm::{DatabaseConnection, EntityTrait, Set, ActiveModelTrait};
+use sea_orm::{ActiveModelTrait, DatabaseConnection, EntityTrait, Set};
 
 use crate::utils::tasks::{RequestTask, ResponseTask};
 
@@ -18,14 +18,13 @@ pub async fn update_task(
 
     current_model.title = Set(task.title.clone());
     current_model.description = Set(task.description.clone());
-    current_model.description = Set(task.description.clone());
+    current_model.difficulty = Set(task.difficulty.clone());
 
     let updated_task = current_model
         .update(&db)
         .await
         .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
 
-    
     Ok(Json(ResponseTask::new(
         updated_task.id,
         updated_task.title,
