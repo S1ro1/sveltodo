@@ -1,5 +1,6 @@
 use crate::entity::tasks;
 use crate::entity::users;
+use crate::utils::tasks::ResponseTask;
 use axum::{
     http::{HeaderMap, StatusCode},
     Extension, Json,
@@ -7,21 +8,11 @@ use axum::{
 use sea_orm::ColumnTrait;
 use sea_orm::QueryFilter;
 use sea_orm::{DatabaseConnection, EntityTrait, ModelTrait};
-use serde::Serialize;
-
-#[derive(Serialize)]
-pub struct ResponseTasks {
-    title: String,
-    description: String,
-    difficulty: i32,
-    finished: bool,
-    id: i32,
-}
 
 pub async fn get_user_tasks(
     Extension(db): Extension<DatabaseConnection>,
     headers: HeaderMap,
-) -> Result<Json<Vec<ResponseTasks>>, StatusCode> {
+) -> Result<Json<Vec<ResponseTask>>, StatusCode> {
     let user = headers.get("userid").unwrap().to_str().unwrap();
 
     let user_id = user.parse::<i32>().unwrap();
@@ -42,13 +33,15 @@ pub async fn get_user_tasks(
     Ok(Json(
         tasks
             .into_iter()
-            .map(|task| ResponseTasks {
-                title: task.title,
-                description: task.description,
-                difficulty: task.difficulty,
-                finished: task.finished,
-                id: task.id,
+            .map(|task| {
+                ResponseTask::new(
+                    task.id,
+                    task.title,
+                    task.description,
+                    task.difficulty,
+                    task.finished,
+                )
             })
-            .collect::<Vec<ResponseTasks>>(),
+            .collect::<Vec<ResponseTask>>(),
     ))
 }

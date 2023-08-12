@@ -5,22 +5,7 @@ use axum::{
 use sea_orm::{ActiveModelTrait, DatabaseConnection, Set};
 
 use crate::entity::tasks;
-
-#[derive(serde::Deserialize)]
-pub struct RequestTask {
-    title: String,
-    description: String,
-    difficulty: i32,
-}
-
-#[derive(serde::Serialize)]
-pub struct ResponseTask {
-    id: i32,
-    title: String,
-    description: String,
-    difficulty: i32,
-    finished: bool,
-}
+use crate::utils::tasks::{RequestTask, ResponseTask};
 
 pub async fn create_task(
     Extension(db): Extension<DatabaseConnection>,
@@ -44,11 +29,11 @@ pub async fn create_task(
         .await
         .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
 
-    Ok(Json(ResponseTask {
-        id: created_task.id.unwrap(),
-        title: created_task.title.unwrap(),
-        description: created_task.description.unwrap(),
-        difficulty: created_task.difficulty.unwrap(),
-        finished: created_task.finished.unwrap(),
-    }))
+    Ok(Json(ResponseTask::new(
+        created_task.id.unwrap(),
+        created_task.title.unwrap(),
+        created_task.description.unwrap(),
+        created_task.difficulty.unwrap(),
+        created_task.finished.unwrap(),
+    )))
 }

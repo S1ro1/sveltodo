@@ -1,3 +1,4 @@
+use crate::utils::users::{RequestUserRegister, ResponseUser};
 use argon2::{
     password_hash::{rand_core::OsRng, PasswordHasher, SaltString},
     Argon2,
@@ -5,22 +6,8 @@ use argon2::{
 use axum::extract::{Extension, Json};
 use axum::http::StatusCode;
 use sea_orm::{ActiveModelTrait, DatabaseConnection, Set};
-use serde::{Deserialize, Serialize};
 
 use crate::entity::users;
-
-#[derive(Deserialize)]
-pub struct RequestRegister {
-    username: String,
-    password: String,
-    repeated_password: String,
-}
-
-#[derive(Serialize)]
-pub struct ResponseRegister {
-    id: i32,
-    username: String,
-}
 
 fn hash_password(password: String) -> String {
     let salt = SaltString::generate(&mut OsRng);
@@ -37,8 +24,8 @@ fn hash_password(password: String) -> String {
 
 pub async fn register(
     Extension(db): Extension<DatabaseConnection>,
-    Json(user): Json<RequestRegister>,
-) -> Result<Json<ResponseRegister>, StatusCode> {
+    Json(user): Json<RequestUserRegister>,
+) -> Result<Json<ResponseUser>, StatusCode> {
     if user.password != user.repeated_password {
         return Err(StatusCode::BAD_REQUEST);
     }
@@ -54,8 +41,5 @@ pub async fn register(
         .await
         .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
 
-    Ok(Json(ResponseRegister {
-        username: model.name.unwrap(),
-        id: model.id.unwrap(),
-    }))
+    Ok(Json(ResponseUser::new(model.id.unwrap(), model.name.unwrap())))
 }

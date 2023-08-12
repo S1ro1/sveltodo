@@ -1,4 +1,7 @@
 use crate::entity::users::{self, Model};
+
+use crate::utils::users::{RequestUser, ResponseUser};
+
 use argon2::{Argon2, PasswordVerifier};
 use axum::{http::StatusCode, Extension, Json};
 
@@ -8,18 +11,6 @@ use cookie::Cookie;
 use jsonwebtoken::{encode, EncodingKey, Header};
 use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 use serde::{Deserialize, Serialize};
-
-#[derive(Deserialize)]
-pub struct RequestUser {
-    username: String,
-    password: String,
-}
-
-#[derive(Serialize, Clone)]
-pub struct ResponseUser {
-    id: i32,
-    name: String,
-}
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct UserClaims {
@@ -69,10 +60,7 @@ fn validate_login(request_pw: String, u: Model) -> Response {
         }
     };
 
-    let response_user = ResponseUser {
-        id: copy.id,
-        name: copy.name,
-    };
+    let response_user = ResponseUser::new(copy.id, copy.name);
 
     let cookie = Cookie::build("authorization", token)
         .http_only(true)
