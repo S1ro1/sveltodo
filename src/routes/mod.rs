@@ -1,6 +1,6 @@
 use axum::{
     middleware,
-    routing::{delete, get, post},
+    routing::{delete, get, post, put},
     Extension, Router,
 };
 use dotenv::dotenv;
@@ -13,6 +13,7 @@ mod get_user_tasks;
 mod jwt_middleware;
 mod login;
 mod register;
+mod update_task;
 
 use create_task::create_task;
 use delete_task::delete_task;
@@ -20,6 +21,7 @@ use get_user_tasks::get_user_tasks;
 use jwt_middleware::jwt_middleware;
 use login::login;
 use register::register;
+use update_task::update_task;
 
 pub async fn router() -> Router {
     dotenv().ok();
@@ -28,8 +30,9 @@ pub async fn router() -> Router {
     let db = Database::connect(db_uri).await.unwrap();
 
     let router = Router::new()
-        .route("/create_task", post(create_task))
         .route("/get_user_tasks", get(get_user_tasks))
+        .route("/create_task", post(create_task))
+        .route("/update_task/:id", put(update_task))
         .route("/delete_task/:id", delete(delete_task))
         .layer(middleware::from_fn(jwt_middleware))
         .route("/login", post(login))

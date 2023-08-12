@@ -8,7 +8,6 @@ pub async fn delete_task(
     Path(id): Path<i32>,
     Extension(db): Extension<DatabaseConnection>,
 ) -> Result<(), StatusCode> {
-    dbg!(id.clone());
     let task = Task::find_by_id(id)
         .one(&db)
         .await
