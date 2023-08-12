@@ -14,6 +14,7 @@
 	import type { RequestTask, ResponseTask } from './tasks';
 	import ModalExampleForm from '$lib/ModalExampleForm.svelte';
 	import { tasks, username } from '../../store';
+	import { stop_propagation } from 'svelte/internal';
 
 	onMount(async () => {
 		const response = await axios.get<ResponseTask[]>('http://localhost:3000/get_user_tasks');
@@ -60,6 +61,24 @@
 			ref: ModalExampleForm
 		}
 	};
+
+	async function toggleTaskStatus(task: ResponseTask) {
+		const response = await axios.put(`http://localhost:3000/update_task_status/${task.id}`, {
+			finished: !task.finished
+		});
+		console.log(response);
+
+		if (response.status !== 200) {
+			console.log('Error updating task');
+			return;
+		}
+
+		tasks.update((t) => {
+			const index = t.findIndex((t) => t.id === task.id);
+			t[index].finished = !t[index].finished;
+			return t;
+		});
+	}
 </script>
 
 <Modal components={modalComponentRegistry} />
@@ -92,6 +111,16 @@
 							</header>
 							<section class="p-4">{task.description}</section>
 							<section class="card-footer">
+								<button
+									type="button"
+									class="btn btn-sm variant-filled-secondary"
+									on:click={(e) => {
+										e.stopPropagation();
+										toggleTaskStatus(task);
+									}}
+								>
+									{task.finished ? 'Completed' : 'Pending'}
+								</button>
 								<Ratings value={task.difficulty} max={5} justify="justify-end">
 									<svelte:fragment slot="empty">{@html icons.circleEmpty}</svelte:fragment>
 									<svelte:fragment slot="half">{@html icons.circleHalf}</svelte:fragment>
