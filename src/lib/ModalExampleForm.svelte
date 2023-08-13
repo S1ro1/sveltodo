@@ -9,32 +9,32 @@
 		let response: AxiosResponse<ResponseTask>;
 
 		if (!$modalStore[0].meta.update) {
-			response = await axios.post<ResponseTask>('http://localhost:3000/create_task', formData);
-			if (response.status !== 200) {
-				console.log('Error creating task');
-				return;
+			try {
+				response = await axios.post<ResponseTask>('http://localhost:3000/create_task', formData);
+				tasks.update((t) => [...t, response.data]);
+			} catch (e) {
+				alert('Error creating task');
 			}
-			tasks.update((t) => [...t, response.data]);
 		} else {
 			if (!$modalStore[0].meta.task_id) {
-				console.log('Error updating task');
+				alert("Error updating task, task id doesn't exist");
 				return;
 			}
 
 			let id = $modalStore[0].meta.task_id;
-			console.log(formData);
-			response = await axios.put<ResponseTask>(`http://localhost:3000/update_task/${id}`, formData);
-
-			if (response.status !== 200) {
-				console.log('Error updating task');
-				return;
+			try {
+				response = await axios.put<ResponseTask>(
+					`http://localhost:3000/update_task/${id}`,
+					formData
+				);
+				tasks.update((t) => {
+					let index = t.findIndex((t) => t.id === id);
+					t[index] = response.data;
+					return t;
+				});
+			} catch (e) {
+				alert('Error updating task');
 			}
-
-			tasks.update((t) => {
-				let index = t.findIndex((t) => t.id === id);
-				t[index] = response.data;
-				return t;
-			});
 		}
 
 		modalStore.close();

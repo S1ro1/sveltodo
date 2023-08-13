@@ -6,16 +6,20 @@
 
 	let form_username = '';
 	let password = '';
+	let repeated_password = '';
+	let failed_register = false;
 
 	async function handleSubmit() {
 		try {
-			const response = await axios.post('http://localhost:3000/login', {
+			const response = await axios.post('http://localhost:3000/register', {
 				username: form_username,
-				password: password
+				password: password,
+				repeated_password: repeated_password
 			});
-			goto('/dashboard');
+
+			goto('/');
 		} catch (error) {
-			alert('login failed');
+			alert('Register failed');
 		}
 	}
 </script>
@@ -23,7 +27,7 @@
 <AppShell title="Login" class="bg-gradient-to-br variant-gradient-secondary-primary">
 	<div class="container h-full mx-auto flex justify-center items-center">
 		<div class="space-y-5">
-			<h1 class="h2 text-center">Login</h1>
+			<h1 class="h2 text-center">Register</h1>
 			<input
 				class="input"
 				title="username"
@@ -38,12 +42,19 @@
 				placeholder="password"
 				bind:value={password}
 			/>
-			<p class="text-sm">
-				Don't have an account? <a href="/register" class="underline">Register</a>
-			</p>
+			<input
+				class="input"
+				title="password"
+				type="password"
+				placeholder="repeate password"
+				bind:value={repeated_password}
+			/>
+			{#if failed_register}
+				<p class="text-sm text-red-500">Register failed</p>
+			{/if}
 			<div class="flex justify-center">
 				<button type="button" class="btn variant-filled-secondary w-32" on:click={handleSubmit}
-					>Sign in</button
+					>Sign up</button
 				>
 			</div>
 		</div>

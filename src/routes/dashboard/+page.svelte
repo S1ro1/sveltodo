@@ -24,15 +24,14 @@
 		tasks.set(response.data);
 	});
 
-	async function deleteTask(id: number) {
-		const response = await axios.delete(`http://localhost:3000/delete_task/${id}`);
-
-		if (response.status !== 200) {
-			console.log('Error deleting task');
-			return;
+	async function deleteTask(e: MouseEvent, id: number) {
+		e.stopPropagation();
+		try {
+			const response = await axios.delete(`http://localhost:3000/delete_task/${id}`);
+			tasks.update((t) => t.filter((t) => t.id !== id));
+		} catch (e) {
+			alert('Error deleting task');
 		}
-
-		tasks.update((t) => t.filter((t) => t.id !== id));
 	}
 
 	function modalComponentForm(
@@ -66,20 +65,18 @@
 	};
 
 	async function toggleTaskStatus(task: ResponseTask) {
-		const response = await axios.put(`http://localhost:3000/update_task_status/${task.id}`, {
-			finished: !task.finished
-		});
-
-		if (response.status !== 200) {
-			console.log('Error updating task');
-			return;
+		try {
+			const response = await axios.put(`http://localhost:3000/update_task_status/${task.id}`, {
+				finished: !task.finished
+			});
+			tasks.update((t) => {
+				const index = t.findIndex((t) => t.id === task.id);
+				t[index].finished = !t[index].finished;
+				return t;
+			});
+		} catch (e) {
+			alert('Error updating task status');
 		}
-
-		tasks.update((t) => {
-			const index = t.findIndex((t) => t.id === task.id);
-			t[index].finished = !t[index].finished;
-			return t;
-		});
 	}
 </script>
 
@@ -114,8 +111,8 @@
 								<button
 									type="button"
 									class="btw-icon text-red"
-									on:click={async () => {
-										await deleteTask(task.id);
+									on:click={async (e) => {
+										await deleteTask(e, task.id);
 									}}>x</button
 								>
 							</header>
