@@ -35,9 +35,7 @@
 				t[index] = response.data;
 				return t;
 			});
-
 		}
-
 
 		modalStore.close();
 	}
@@ -73,7 +71,7 @@
 			<label class="label">
 				<span>Description</span>
 				<textarea
-					class="variant-ghost-surface border-none rounded-2xl w-full"
+					class="textarea"
 					bind:value={formData.description}
 					placeholder="Enter task description..."
 				/>

@@ -14,7 +14,10 @@
 	import type { RequestTask, ResponseTask } from './tasks';
 	import ModalExampleForm from '$lib/ModalExampleForm.svelte';
 	import { tasks, username } from '../../store';
-	import { stop_propagation } from 'svelte/internal';
+
+	let search = '';
+
+	$: filteredTasks = $tasks.filter((t) => t.title.toLowerCase().includes(search.toLowerCase()));
 
 	onMount(async () => {
 		const response = await axios.get<ResponseTask[]>('http://localhost:3000/get_user_tasks');
@@ -66,7 +69,6 @@
 		const response = await axios.put(`http://localhost:3000/update_task_status/${task.id}`, {
 			finished: !task.finished
 		});
-		console.log(response);
 
 		if (response.status !== 200) {
 			console.log('Error updating task');
@@ -91,7 +93,15 @@
 	<slot>
 		<div class="container h-full mx-auto flex justify-center items-center">
 			<div class="flex-col justify-center w-2/3">
-				{#each $tasks as task}
+				<div>
+					<input
+						type="text"
+						class="input variant-ghost-primary placeholder-inherit"
+						placeholder="Search"
+						bind:value={search}
+					/>
+				</div>
+				{#each filteredTasks as task}
 					<button
 						class="appearance-none border-none bg-none p-0 m-0 block w-full text-left"
 						on:click={() => {
