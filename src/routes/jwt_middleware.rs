@@ -7,7 +7,7 @@ use axum_extra::extract::CookieJar;
 use jsonwebtoken::{DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
 
-const SECRET: &str = "siro";
+use crate::utils::utils::get_secret;
 
 #[derive(Deserialize, Serialize, Clone, Debug)]
 pub struct UserClaims {
@@ -38,7 +38,7 @@ pub async fn jwt_middleware<B>(
 
     let user_claims = jsonwebtoken::decode::<UserClaims>(
         &jwt_token,
-        &DecodingKey::from_secret(SECRET.as_ref()),
+        &DecodingKey::from_secret(get_secret().as_ref()),
         &Validation::new(token_header.alg),
     );
 

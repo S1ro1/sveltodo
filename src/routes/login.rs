@@ -1,6 +1,7 @@
 use crate::entity::users::{self, Model};
 
 use crate::utils::users::{RequestUser, ResponseUser};
+use crate::utils::utils::get_secret;
 
 use argon2::{Argon2, PasswordVerifier};
 use axum::{http::StatusCode, Extension, Json};
@@ -25,8 +26,6 @@ impl UserClaims {
     }
 }
 
-const SECRET: &str = "siro";
-
 fn validate_login(request_pw: String, u: Model) -> Response {
     let copy = u.clone();
     let parsed_hash = argon2::PasswordHash::new(&u.password).unwrap();
@@ -50,7 +49,7 @@ fn validate_login(request_pw: String, u: Model) -> Response {
     let token = encode(
         &Header::default(),
         &claims,
-        &EncodingKey::from_secret(SECRET.as_ref()),
+        &EncodingKey::from_secret(get_secret().as_ref()),
     );
 
     let token = match token {
