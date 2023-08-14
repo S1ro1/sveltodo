@@ -1,0 +1,8 @@
+A simple TODO app built using svelte and rust.
+
+## Run
+```bash
+docker compose up -d --wait
+```
+
+Frontend is built using svelte and skeleton ui. For backend, I used axum and sqlx and seaorm as orm. Database being used is postgresql.
