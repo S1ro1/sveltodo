@@ -14,6 +14,8 @@
 	import type { RequestTask, ResponseTask } from './tasks';
 	import ModalExampleForm from '$lib/ModalExampleForm.svelte';
 	import { tasks, username } from '../../store';
+	import { fly } from 'svelte/transition';
+	import { flip } from 'svelte/animate';
 
 	let search = '';
 
@@ -98,14 +100,18 @@
 						bind:value={search}
 					/>
 				</div>
-				{#each filteredTasks as task}
+				{#each filteredTasks as task (task.id)}
 					<button
 						class="appearance-none border-none bg-none p-0 m-0 block w-full text-left"
+						animate:flip={{duration: 300}}
 						on:click={() => {
 							modalComponentForm(task.id, task.title, task.description, task.difficulty, true);
 						}}
 					>
-						<div class="card p-4 m-4 variant-soft-surface card-hover">
+						<div
+							transition:fly={{ y: 300, duration: 500 }}
+							class="card p-4 m-4 variant-soft-surface card-hover"
+						>
 							<header class="class-header font-extrabold border-1 flex justify-between">
 								<p>{task.title.toUpperCase()}</p>
 								<button
