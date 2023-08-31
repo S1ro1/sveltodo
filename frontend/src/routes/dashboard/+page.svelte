@@ -12,7 +12,7 @@
 	import { icons } from './icons';
 	import { onMount } from 'svelte';
 	import type { RequestTask, ResponseTask } from './tasks';
-	import ModalExampleForm from '$lib/ModalExampleForm.svelte';
+	import ModalExampleForm from '$lib/TaskModal.svelte';
 	import { tasks, username } from '../../store';
 	import { fly } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
