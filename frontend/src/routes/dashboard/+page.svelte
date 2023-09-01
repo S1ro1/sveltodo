@@ -16,6 +16,7 @@
 	import { tasks, username } from '../../store';
 	import { fly } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
+	import { goto } from '$app/navigation';
 
 	let search = '';
 
@@ -80,6 +81,10 @@
 			alert('Error updating task status');
 		}
 	}
+
+	async function handleProfile() {
+		goto('/profile');
+	}
 </script>
 
 <Modal components={modalComponentRegistry} />
@@ -95,7 +100,12 @@
 				/>
 			</div>
 			<div class="absolute right-6">
-				<Avatar initials={$username} />
+				<Avatar
+					initials={$username}
+					on:click={handleProfile}
+					cursor="cursor-pointer"
+					border="border-2 border-surface-300-600-token hover:!border-primary-500"
+				/>
 			</div>
 		</section>
 	</svelte:fragment>
