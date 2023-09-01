@@ -85,25 +85,29 @@
 <Modal components={modalComponentRegistry} />
 <AppShell title="Dashboard" class="bg-gradient-to-br variant-gradient-secondary-primary">
 	<svelte:fragment slot="header">
-		<div class="flex justify-end p-8">
-			<Avatar initials={$username} />
-		</div>
+		<section class="py-6">
+			<div class="w-1/2 absolute left-1/2 -translate-x-1/2 top-10">
+				<input
+					type="text"
+					class="input variant-ghost-primary placeholder-inherit"
+					placeholder="Search"
+					bind:value={search}
+				/>
+			</div>
+			<div class="absolute right-6">
+				<Avatar initials={$username} />
+			</div>
+		</section>
 	</svelte:fragment>
 	<slot>
 		<div class="container h-full mx-auto flex justify-center items-center">
-			<div class="flex-col justify-center w-2/3">
-				<div>
-					<input
-						type="text"
-						class="input variant-ghost-primary placeholder-inherit"
-						placeholder="Search"
-						bind:value={search}
-					/>
-				</div>
+			<div
+				class="flex-col justify-center w-2/3 border-gray-400 border-2 rounded-3xl h-5/6 overflow-y-auto hide-scrollbar"
+			>
 				{#each filteredTasks as task (task.id)}
 					<button
 						class="appearance-none border-none bg-none p-0 m-0 block w-full text-left"
-						animate:flip={{duration: 300}}
+						animate:flip={{ duration: 300 }}
 						on:click={() => {
 							modalComponentForm(task.id, task.title, task.description, task.difficulty, true);
 						}}
